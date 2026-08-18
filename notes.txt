@@ -1,0 +1,12 @@
+module: is a file help to create variables. like a header file. we can import them.
+three varities: 1.builtin 2. local 3. third party.
+
+to import and export in builtin module there are two ways:
+1. CJM  2. ESM->script module(more used nowadays)
+
+const os=require(os);->CJS
+import os from 'os'->ESM;
+
+
+
+
