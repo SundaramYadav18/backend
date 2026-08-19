@@ -8,5 +8,8 @@ const os=require(os);->CJS
 import os from 'os'->ESM;
 
 
+BUFFER: the location where the chunks are stored.
+STREAM: the process of making of chunks and transfering it into the buffer is stream.
+
 
 
