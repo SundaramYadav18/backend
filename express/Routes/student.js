@@ -1,10 +1,16 @@
-const express = require('express'); // third party module 
+const checkRole = require('../Middleware/role_ware')
+const students= require('../Models/studentModel.js')
+const express = require('express'); // third party module
 const app = express(); // this statement will equivalent to http.createServer()
 const router = express.Router(); // this statement will equivalent to http.createServer()
-const students=require('../models/studentModel') //importing student model
 app.use(express.json());
-// Middleware- it is a function that has access to the request object, the response object, and the next function in the chain. 
+// Middleware- it is a function that has access to the request object, the response object, and the next function in the chain.
 // someone who sits in between client and server
+
+router.use((req, res, next) => {
+    console.log("Router Middleware Executed");       // for checking  requests and authentication
+    next();
+})
 // let students = [
 //     {
 //         id: 1,
@@ -22,12 +28,18 @@ app.use(express.json());
 //         age: 21,
 //     },
 // ]
-router.get('/' /*endpoint*/ , (req, res) => {
-    students=students.find()
-    res.json(students)
+router.get('/', checkRole('admin', 'teacher', 'student'), async (req, res) => {
+    try {
+        students = await students.find()
+        res.json(students)
+    }
+    catch (e) {
+        console.log(e)
+    }
+
 })
 
-router.get('/search', (req, res) => {
+router.get('/search',checkRole('admin', 'teacher', 'student'), (req, res) => {
     const name = req.query.name
     const age = req.query.age
     
@@ -35,10 +47,10 @@ router.get('/search', (req, res) => {
     res.json(stud)
 })
 
-router.get('/:id', (req, res) => {
+router.get('/:id',checkRole('admin', 'teacher', 'student'), async (req, res) => {
     // console.log(req.params.id)
     const id = parseInt(req.params.id)
-    const student=students.find(student =>student.id === id)
+    const student= await students.find(student =>student.id === id)
     if(!student){
         return res.status(404).json({
             message: "Student not found"
@@ -47,7 +59,7 @@ router.get('/:id', (req, res) => {
     res.json(student)
 })
 
-router.post('/', (req, res) => {
+router.post('/', checkRole('admin', 'teacher'),  (req, res) => {
     const newStudents = {
         id: students.length + 1,
         name: req.body.name,
@@ -60,7 +72,7 @@ router.post('/', (req, res) => {
     })
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id',checkRole('admin'),  (req, res) => {
     const id = parseInt(req.params.id)
     const index=students.findIndex(student=>student.id===id)
     if (index!==-1) {
@@ -75,7 +87,7 @@ router.delete('/:id', (req, res) => {
 
 
 //if you want to change all the details of student then use put method
-router.put('/:id', (req, res) => {
+router.put('/:id', checkRole('admin', 'teacher') , (req, res) => {
     const id=parseInt(req.params.id)
     const stud = students.find(student => student.id === id);
     if (!stud) {
@@ -91,7 +103,7 @@ router.put('/:id', (req, res) => {
 })
 
 // if you wan to change the only particular detail of student then use patch method
-router.patch('/:id', (req, res) => {
+router.patch('/:id',checkRole('admin', 'teacher'),  (req, res) => {
     const id = parseInt(req.params.id)
     const stud = students.find(student => student.id === id);
     if (!stud) {
@@ -116,4 +128,4 @@ router.patch('/:id', (req, res) => {
 //     console.log("Server is listening.");
 // })
 
-module.exports=router
+module.exports=router'
