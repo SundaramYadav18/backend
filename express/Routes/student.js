@@ -128,4 +128,4 @@ router.patch('/:id',checkRole('admin', 'teacher'),  (req, res) => {
 //     console.log("Server is listening.");
 // })
 
-module.exports=router'
+module.exports=router;
